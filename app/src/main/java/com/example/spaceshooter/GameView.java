@@ -12,9 +12,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
-import androidx.constraintlayout.solver.widgets.Rectangle;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -26,7 +23,7 @@ public class GameView extends SurfaceView implements Runnable {
     private int asteroidSleep;
     private int onTouchInitialX;
     private int onTouchInitialY;
-    private ship ourShip;
+    private Ship ourShip;
     private BackGround backGround1, backGround2;
     private boolean isRunning ;
     private Thread thread;
@@ -51,7 +48,7 @@ public class GameView extends SurfaceView implements Runnable {
         Bitmap asteroidTemp = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid);
         asteroidSize = asteroidTemp.getWidth();
         paint = new Paint();
-        ourShip = new ship(screenX, screenY ,getResources());
+        ourShip = new Ship(screenX, screenY ,getResources());
         //bullet = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight());
         backGround2.y = screenY;
     }
