@@ -9,8 +9,16 @@
         android:roundIcon="@drawable/ourship"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+        <service
+            android:name=".LoseNotificationService"
+            android:enabled="true"
+            android:exported="false"></service>
+        <service
+            android:name=".LoseAGameNotificationService"
+            android:exported="false" />
+
         <activity android:name=".GameActivity" />
-        <activity android:name=".SettingMenu"/>
+        <activity android:name=".SettingMenu" />
         <activity
             android:name=".MainMenu"
             android:exported="true">

@@ -2,6 +2,8 @@ package com.example.spaceshooter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -18,7 +20,7 @@ import java.util.Random;
 public class GameView extends SurfaceView implements Runnable {
 
     boolean ended;
-    int highScore;
+    int Score, Highscore;
     private int bulletSleep;
     private int asteroidSleep;
     private int onTouchInitialX;
@@ -33,16 +35,21 @@ public class GameView extends SurfaceView implements Runnable {
     private float screenRatioX, screenRatioY;
     private ArrayList<Bullet> bullets;
     private ArrayList<Asteroid> asteroids;
+
+    private Context contextGame;
     public GameView (Context context, int screenX, int screenY) {
         super(context);
-        bullets = new ArrayList<Bullet>();
+        contextGame = context;
+        SharedPreferences pref = context.getSharedPreferences("Highscore",Context.MODE_PRIVATE);
+                bullets = new ArrayList<Bullet>();
         asteroids = new ArrayList<Asteroid>();
         Log.i("ihatemyself","Gameview initialize");
         this.screenX = screenX;
         this.screenY = screenY;
         bulletSleep = 20;
         asteroidSleep = 17;
-        highScore = 0;
+        Score = 0;
+        Highscore = pref.getInt("Highscore",0);
         backGround1 = new BackGround(screenX, screenY, getResources());
         backGround2 = new BackGround(screenX, screenY, getResources());
         Bitmap asteroidTemp = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid);
@@ -123,7 +130,8 @@ public class GameView extends SurfaceView implements Runnable {
                 if (a.intersect(b)) {
                     bullets.remove(bullet);
                     asteroid.setExplode(true);
-                    highScore += 100;
+                    Score += 100;
+                    if (Score>Highscore) Highscore = Score;
                 }
                 if (a.intersect(c)) {
                     asteroid.setExplode(true);
@@ -137,6 +145,9 @@ public class GameView extends SurfaceView implements Runnable {
             bullet.setY(bullet.getY() - 20);
         }
         if (ourShip.getHealthAsInt() < 1) {
+            SharedPreferences pref = contextGame.getSharedPreferences("Highscore",Context.MODE_PRIVATE);
+            int n = pref.getInt("Highscore",0);
+            if (n<Highscore) pref.edit().putInt("Highscore",Highscore).apply();
             Canvas canvas = getHolder().lockCanvas();
             Paint paint1 = new Paint();
             paint1.setColor(Color.WHITE);
@@ -144,6 +155,8 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawText("YOU LOSE!!!!!", screenX/2 - 200, screenY/2, paint1);
             getHolder().unlockCanvasAndPost(canvas);
             thread.sleep(2000);
+            Intent intent = new Intent(contextGame,LoseNotificationService.class);
+            contextGame.startService(intent);
             ((Activity)getContext()).finish();
         }
     }
@@ -164,7 +177,8 @@ public class GameView extends SurfaceView implements Runnable {
             paint1.setColor(Color.WHITE);
             paint1.setTextSize(70);
             canvas.drawText("Health: " + ourShip.getHealth(), 30, 80, paint1);
-            canvas.drawText("Score: " + highScore, screenX - 550, 80, paint1);
+            canvas.drawText("Score: " + Score, screenX - 550, 80, paint1);
+            canvas.drawText("High Score: " + Highscore, screenX - 550, 160, paint1);
             getHolder().unlockCanvasAndPost(canvas);
         }
 

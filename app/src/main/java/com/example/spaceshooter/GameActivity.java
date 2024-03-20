@@ -2,6 +2,7 @@ package com.example.spaceshooter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -11,6 +12,7 @@ import com.example.spaceshooter.GameView;
 public class GameActivity extends AppCompatActivity {
 
     private GameView gameView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
