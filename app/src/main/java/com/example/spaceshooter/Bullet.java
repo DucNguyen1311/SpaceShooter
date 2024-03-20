@@ -12,12 +12,14 @@ public class Bullet {
     private int height;
     private int x;
     private int y;
+    private int rectConstraint;
     public Bullet(Resources res, int width, int height, int x, int y) {
         bullet1 = BitmapFactory.decodeResource(res, R.drawable.bullet1);
         bullet2 = BitmapFactory.decodeResource(res, R.drawable.bullet2);
         bullet3 = BitmapFactory.decodeResource(res, R.drawable.bullet3);
         bullet4 = BitmapFactory.decodeResource(res, R.drawable.bullet4);
         int i = 50;
+        rectConstraint = 50;
         this.width = i + width;
         this.height = i + height;
         this.x = x;
@@ -81,6 +83,6 @@ public class Bullet {
     }
 
     public Rect getRect() {
-        return new Rect(x + 10, y + 10, x + width - 10, y + height - 10);
+        return new Rect(x + rectConstraint, y + rectConstraint, x + width - rectConstraint, y + height - rectConstraint);
     }
 }

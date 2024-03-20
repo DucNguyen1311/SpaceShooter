@@ -13,10 +13,12 @@ public class Asteroid {
     boolean exploded;
     Bitmap asteroid;
     Bitmap explode1, explode2, explode3, explode4;
+    private int rectConstraint;
 
     public Asteroid(int x, Resources res) {
         this.x = x;
         this.y = 0;
+        rectConstraint = 50;
         asteroid = BitmapFactory.decodeResource(res, R.drawable.asteroid);
         explode1 = BitmapFactory.decodeResource(res, R.drawable.explode1);
         explode2 = BitmapFactory.decodeResource(res, R.drawable.explode2);
@@ -80,7 +82,7 @@ public class Asteroid {
     }
 
     public Rect getRect() {
-        return new Rect(x + 10, y + 10, x + width - 10, y + height - 10);
+        return new Rect(x + rectConstraint, y + rectConstraint, x + width - rectConstraint, y + height - rectConstraint);
     }
 
     public void setExplode(boolean explode) {
