@@ -41,4 +41,9 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         gameView.resume();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

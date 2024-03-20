@@ -1,14 +1,11 @@
 package com.example.spaceshooter;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
 
-public class ship {
+public class Ship {
     private int x, y, width, height;
     private int health;
     private int invincibleTime;
@@ -16,7 +13,7 @@ public class ship {
     Bitmap ship;
     private int rectConstraint;
 
-    public ship(int screenX, int screenY, Resources res){
+    public Ship(int screenX, int screenY, Resources res){
         ship = BitmapFactory.decodeResource(res, R.drawable.ourship);
         rectConstraint = 50;
         this.y = screenY - 256;
