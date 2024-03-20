@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name=".GameActivity" />
+        <activity android:name=".SettingMenu"/>
         <activity
             android:name=".MainMenu"
             android:exported="true">
