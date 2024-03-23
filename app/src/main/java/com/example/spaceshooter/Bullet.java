@@ -1,9 +1,13 @@
 package com.example.spaceshooter;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
+
+import kotlinx.coroutines.internal.ContextScope;
 
 public class Bullet {
     Bitmap bullet1, bullet2, bullet3, bullet4;
@@ -13,13 +17,14 @@ public class Bullet {
     private int x;
     private int y;
     private int rectConstraint;
-    public Bullet(Resources res, int width, int height, int x, int y) {
+    private MediaPlayer bulletSfx;
+    public Bullet(Resources res, int width, int height, int x, int y, Context context) {
         bullet1 = BitmapFactory.decodeResource(res, R.drawable.bullet1);
         bullet2 = BitmapFactory.decodeResource(res, R.drawable.bullet2);
         bullet3 = BitmapFactory.decodeResource(res, R.drawable.bullet3);
         bullet4 = BitmapFactory.decodeResource(res, R.drawable.bullet4);
         int i = 50;
-        rectConstraint = 50;
+        bulletSfx = MediaPlayer.create(context, R.raw.shoot);
         this.width = i + width;
         this.height = i + height;
         this.x = x;
@@ -80,6 +85,9 @@ public class Bullet {
 
     public void setWidth(int width) {
         this.width = width;
+    }
+    public void playShootSound() {
+        bulletSfx.start();
     }
 
     public Rect getRect() {

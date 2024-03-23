@@ -14,11 +14,14 @@
             android:enabled="true"
             android:exported="false"></service>
         <service
-            android:name=".LoseAGameNotificationService"
+            android:name=".LowBatteryNotification"
+            android:enabled="true"
+            android:exported="false"></service>
+        <service
+            android:name=".BackgroundMusicService"
             android:exported="false" />
-
-        <activity android:name=".GameActivity" />
-        <activity android:name=".SettingMenu" />
+        <activity android:name=".GameActivity" android:launchMode="singleTask"/>
+        <activity android:name=".SettingMenu" android:launchMode="singleTask"/>
         <activity
             android:name=".MainMenu"
             android:exported="true">

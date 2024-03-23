@@ -10,6 +10,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -41,7 +43,7 @@ public class GameView extends SurfaceView implements Runnable {
         super(context);
         contextGame = context;
         SharedPreferences pref = context.getSharedPreferences("Highscore",Context.MODE_PRIVATE);
-                bullets = new ArrayList<Bullet>();
+        bullets = new ArrayList<Bullet>();
         asteroids = new ArrayList<Asteroid>();
         Log.i("ihatemyself","Gameview initialize");
         this.screenX = screenX;
@@ -56,7 +58,6 @@ public class GameView extends SurfaceView implements Runnable {
         asteroidSize = asteroidTemp.getWidth();
         paint = new Paint();
         ourShip = new Ship(screenX, screenY ,getResources());
-        //bullet = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight());
         backGround2.y = screenY;
     }
 
@@ -76,8 +77,9 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
     }
-
+    //this function is used to update the state of stuff
     private void update() throws InterruptedException {
+        //this block is used to make the background move
         backGround1.y += 10 ;
         backGround2.y += 10 ;
         if (backGround1.y > screenY) {
@@ -86,22 +88,26 @@ public class GameView extends SurfaceView implements Runnable {
         if (backGround2.y > screenY) {
             backGround2.y = -backGround2.background.getHeight()  ;
         }
+        // this block is used to count the spawn time of bullet
         if (bulletSleep > 0) {
             bulletSleep--;
         } else {
             bulletSleep = 20;
-            Bullet bullet = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int)ourShip.getX(), (int)ourShip.getY());
+            Bullet bullet = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int)ourShip.getX(), (int)ourShip.getY(), contextGame);
+            bullet.playShootSound();
             bullets.add(bullet);
         }
+        //this if statement is used to count the spawn time of asteroids
         if (asteroidSleep > 0) {
             asteroidSleep--;
         } else {
             asteroidSleep = 17;
             Random generator = new Random();
             int spawnPoint = generator.nextInt((screenX - asteroidSize - 30) + 1 ) + 30;
-            Asteroid asteroid = new Asteroid(spawnPoint, getResources());
+            Asteroid asteroid = new Asteroid(spawnPoint, getResources(), contextGame);
             asteroids.add(asteroid);
         }
+        //this for loop is used to update the coordinates of asteroids
         for (int i = 0; i < asteroids.size(); i++) {
             Asteroid asteroid = asteroids.get(i);
             if (asteroid.getY() + asteroid.getHeight() > screenY) {
@@ -109,20 +115,27 @@ public class GameView extends SurfaceView implements Runnable {
                 ourShip.getDirectHit();
                 continue;
             }
+            // this if statement is used to check if the asteroid is fully exploded;
             if (asteroid.isExploded()) {
                 asteroids.remove(asteroids.get(i));
                 continue;
             }
+            // this if statement is used to check if the asteroid is still exploding;
             if (asteroid.isExplode()) {
                 continue;
             }
+            // this function is used to update the coords of asteroids
             asteroids.get(i).setY(asteroids.get(i).getY() + 20);
         }
+
+        //this for loop is used to update the bullet state and checking intersection
         for (int i = 0; i < bullets.size(); i++) {
             Bullet bullet = bullets.get(i);
+            // if the bullet go out of screen, remove it
             if (bullet.getY() < 0) {
                 bullets.remove(bullet);
             }
+            // this for loop is to check intersection of ship, asteroids and bullet
             for (Asteroid asteroid : asteroids) {
                 Rect a = asteroid.getRect();
                 Rect b = bullet.getRect();
@@ -131,6 +144,7 @@ public class GameView extends SurfaceView implements Runnable {
                     bullets.remove(bullet);
                     asteroid.setExplode(true);
                     Score += 100;
+                    asteroid.playExplodingSound();
                     if (Score>Highscore) Highscore = Score;
                 }
                 if (a.intersect(c)) {
@@ -140,10 +154,14 @@ public class GameView extends SurfaceView implements Runnable {
 
             }
         }
+        // whenever the ship is hit, it would be invincible in the next several seconds.
+        // this function is to count that invincible frame
         ourShip.coldDown();
+        // this function is used to update the bullet
         for (Bullet bullet : bullets) {
             bullet.setY(bullet.getY() - 20);
         }
+        // gameover clause
         if (ourShip.getHealthAsInt() < 1) {
             SharedPreferences pref = contextGame.getSharedPreferences("Highscore",Context.MODE_PRIVATE);
             int n = pref.getInt("Highscore",0);
@@ -160,7 +178,7 @@ public class GameView extends SurfaceView implements Runnable {
             ((Activity)getContext()).finish();
         }
     }
-
+    // this function is used to draw stuff into the canvas
     private void draw() {
         if (getHolder().getSurface().isValid()) {
             Canvas canvas = getHolder().lockCanvas();

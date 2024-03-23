@@ -1,9 +1,12 @@
 package com.example.spaceshooter;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
+import android.provider.MediaStore;
 
 public class Asteroid {
     int explodeSequence = 13;
@@ -14,11 +17,13 @@ public class Asteroid {
     Bitmap asteroid;
     Bitmap explode1, explode2, explode3, explode4;
     private int rectConstraint;
+    MediaPlayer explodingSfx;
 
-    public Asteroid(int x, Resources res) {
+    public Asteroid(int x, Resources res, Context context) {
         this.x = x;
         this.y = 0;
         rectConstraint = 50;
+        explodingSfx = MediaPlayer.create(context,R.raw.exploding );
         asteroid = BitmapFactory.decodeResource(res, R.drawable.asteroid);
         explode1 = BitmapFactory.decodeResource(res, R.drawable.explode1);
         explode2 = BitmapFactory.decodeResource(res, R.drawable.explode2);
@@ -81,6 +86,9 @@ public class Asteroid {
         return asteroid;
     }
 
+    public void playExplodingSound(){
+        explodingSfx.start();
+    }
     public Rect getRect() {
         return new Rect(x + rectConstraint, y + rectConstraint, x + width - rectConstraint, y + height - rectConstraint);
     }
