@@ -2,10 +2,17 @@ package com.example.spaceshooter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.spaceshooter.GameView;
 
@@ -22,8 +29,7 @@ public class GameActivity extends AppCompatActivity {
 
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
-
-        gameView = new GameView(this, point.x, point.y);
+        gameView = new GameView(this, point.x, point.y,this.getIntent().getStringExtra("name") );
 
         setContentView(gameView);
     }

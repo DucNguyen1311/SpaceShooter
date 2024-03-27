@@ -1,28 +1,40 @@
 package com.example.spaceshooter;
 
+import static android.app.PendingIntent.getActivity;
+import static android.content.Context.MODE_PRIVATE;
+import static android.content.Intent.getIntent;
+import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GameView extends SurfaceView implements Runnable {
-
-    boolean ended;
-    int Score, Highscore;
+    private int playerScore, Highscore;
     private int bulletSleep;
     private int asteroidSleep;
     private int onTouchInitialX;
@@ -33,32 +45,37 @@ public class GameView extends SurfaceView implements Runnable {
     private Thread thread;
     private int screenX, screenY;
     private int asteroidSize;
-    private Paint paint;
-    private float screenRatioX, screenRatioY;
     private ArrayList<Bullet> bullets;
     private ArrayList<Asteroid> asteroids;
+    scoreSaverTable helper;
+    String playerName;
 
+    SQLiteDatabase database;
     private Context contextGame;
-    public GameView (Context context, int screenX, int screenY) {
+    public GameView (Context context, int screenX, int screenY, String name) {
         super(context);
+        helper = new scoreSaverTable(context);
         contextGame = context;
-        SharedPreferences pref = context.getSharedPreferences("Highscore",Context.MODE_PRIVATE);
         bullets = new ArrayList<Bullet>();
         asteroids = new ArrayList<Asteroid>();
-        Log.i("ihatemyself","Gameview initialize");
+        Log.i("ihatemyself", name);
+        playerName = name;
+        Score score = helper.getHighestScore();
+        if(score != null) {
+            Highscore = score.getScore();
+        }
         this.screenX = screenX;
         this.screenY = screenY;
         bulletSleep = 20;
         asteroidSleep = 17;
-        Score = 0;
-        Highscore = pref.getInt("Highscore",0);
+        playerScore = 0;
         backGround1 = new BackGround(screenX, screenY, getResources());
         backGround2 = new BackGround(screenX, screenY, getResources());
         Bitmap asteroidTemp = BitmapFactory.decodeResource(getResources(), R.drawable.asteroid);
         asteroidSize = asteroidTemp.getWidth();
-        paint = new Paint();
         ourShip = new Ship(screenX, screenY ,getResources());
         backGround2.y = screenY;
+
     }
 
     @Override
@@ -143,9 +160,9 @@ public class GameView extends SurfaceView implements Runnable {
                 if (a.intersect(b)) {
                     bullets.remove(bullet);
                     asteroid.setExplode(true);
-                    Score += 100;
+                    playerScore += 100;
                     asteroid.playExplodingSound();
-                    if (Score>Highscore) Highscore = Score;
+                    if (playerScore>Highscore) Highscore = playerScore;
                 }
                 if (a.intersect(c)) {
                     asteroid.setExplode(true);
@@ -163,18 +180,19 @@ public class GameView extends SurfaceView implements Runnable {
         }
         // gameover clause
         if (ourShip.getHealthAsInt() < 1) {
-            SharedPreferences pref = contextGame.getSharedPreferences("Highscore",Context.MODE_PRIVATE);
-            int n = pref.getInt("Highscore",0);
-            if (n<Highscore) pref.edit().putInt("Highscore",Highscore).apply();
+            helper.addNewScore(new Score(playerName, playerScore));
             Canvas canvas = getHolder().lockCanvas();
             Paint paint1 = new Paint();
             paint1.setColor(Color.WHITE);
             paint1.setTextSize(70);
             canvas.drawText("YOU LOSE!!!!!", screenX/2 - 200, screenY/2, paint1);
             getHolder().unlockCanvasAndPost(canvas);
-            thread.sleep(2000);
+            asteroids.clear();
+            bullets.clear();
             Intent intent = new Intent(contextGame,LoseNotificationService.class);
             contextGame.startService(intent);
+            Log.d("Player Score is: ", " " + playerScore);
+            thread.sleep(2000);
             ((Activity)getContext()).finish();
         }
     }
@@ -195,7 +213,7 @@ public class GameView extends SurfaceView implements Runnable {
             paint1.setColor(Color.WHITE);
             paint1.setTextSize(70);
             canvas.drawText("Health: " + ourShip.getHealth(), 30, 80, paint1);
-            canvas.drawText("Score: " + Score, screenX - 550, 80, paint1);
+            canvas.drawText("Score: " + playerScore, screenX - 550, 80, paint1);
             canvas.drawText("High Score: " + Highscore, screenX - 550, 160, paint1);
             getHolder().unlockCanvasAndPost(canvas);
         }
@@ -211,7 +229,6 @@ public class GameView extends SurfaceView implements Runnable {
     public void resume() {
         Log.i("thread", "thread started");
         isRunning = true;
-        ended = false;
         thread = new Thread(this);
         thread.start();
     }
@@ -221,9 +238,6 @@ public class GameView extends SurfaceView implements Runnable {
         thread.join();
     }
 
-    public boolean isEnded() {
-        return ended;
-    }
 
     @Override
         public boolean onTouchEvent(MotionEvent event) {
