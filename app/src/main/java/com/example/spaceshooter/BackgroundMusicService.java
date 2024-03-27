@@ -35,7 +35,7 @@ public class BackgroundMusicService extends Service {
     public void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        player.stop();
+        player.release();
     }
 
     protected void onNewIntent() {
