@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.spaceshooter">
+    <permission
+        android:name="com.example.spaceshooter.scoreSaverProvider.WRITE_DATABASE"
+        android:label="Write Database"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="com.example.spaceshooter.scoreSaverProvider.READ_DATABASE"
+        android:label="Read Database"
+        android:protectionLevel="normal" />
 
     <application
         android:allowBackup="true"
@@ -9,6 +18,13 @@
         android:roundIcon="@drawable/ourship"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+
+        <provider android:name="com.example.spaceshooter.scoreSaverProvider"
+            android:authorities="com.example.spaceshooter.scoreSaverProvider"
+            android:enabled="true"
+            android:exported="true" >
+        </provider>
+
         <service
             android:name=".LoseNotificationService"
             android:enabled="true"

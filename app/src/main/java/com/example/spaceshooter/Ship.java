@@ -67,6 +67,9 @@ public class Ship {
         }
     }
 
+    public void forfeit() {
+        this.health = 0;
+    }
     public void getDirectHit() {
         health--;
     }

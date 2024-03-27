@@ -4,6 +4,8 @@ import static android.app.PendingIntent.getActivity;
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.Intent.getIntent;
 import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,6 +20,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -61,6 +65,7 @@ public class GameView extends SurfaceView implements Runnable {
         Log.i("ihatemyself", name);
         playerName = name;
         Score score = helper.getHighestScore();
+
         if(score != null) {
             Highscore = score.getScore();
         }
@@ -78,6 +83,9 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
+    public void resetLife() {
+        ourShip.forfeit();
+    }
     @Override
     public void run() {
 
@@ -118,7 +126,7 @@ public class GameView extends SurfaceView implements Runnable {
         if (asteroidSleep > 0) {
             asteroidSleep--;
         } else {
-            asteroidSleep = 17;
+            asteroidSleep = 20;
             Random generator = new Random();
             int spawnPoint = generator.nextInt((screenX - asteroidSize - 30) + 1 ) + 30;
             Asteroid asteroid = new Asteroid(spawnPoint, getResources(), contextGame);
