@@ -101,7 +101,7 @@ public class MainMenu extends AppCompatActivity {
             }
         });
         notInterested.setOnClickListener(v -> {
-            finish();
+            dialog.dismiss();
         });
 
         play.setOnClickListener(v -> {
