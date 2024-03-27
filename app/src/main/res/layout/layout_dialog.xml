@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bgr"
+    android:orientation="vertical"
+    android:layout_margin="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="Type your name to save highscore"
+        android:textSize="23dp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:background="@drawable/dialog_bgr_black"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Click play to play"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="@android:color/black"/>
+        <EditText
+            android:id="@+id/dialog_nameTyper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/dialog_bgr_grey"
+            android:layout_marginTop="16dp"
+            android:hint="Your name"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/dialog_NotInterested"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:layout_marginEnd="5dp"
+            android:text="Not Intersted"
+            android:background="@drawable/dialog_bgr_black_10dp"/>
+        <Button
+            android:id="@+id/dialog_Play"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:text="Play"
+            android:background="@drawable/dialog_bgr_black_10dp"/>
+    </LinearLayout>
+</LinearLayout>
