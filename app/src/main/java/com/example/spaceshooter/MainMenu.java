@@ -1,22 +1,20 @@
 package com.example.spaceshooter;
 
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.contentcapture.DataShareWriteAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupMenu;
-import android.widget.SeekBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -68,15 +66,24 @@ public class MainMenu extends AppCompatActivity {
                 if (id == R.id.btn_setting) {
                     startActivity(new Intent(MainMenu.this, SettingMenu.class));
                 }
+                if (id == R.id.btn_contactus) {
+                    //Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+                    //String linkContact = "https://vnn-imgs-a1.vgcloud.vn/image1.ictnews.vn/_Files/2019/05/03/1935515(1).jpg";
+                    //intent.putExtra(SearchManager.QUERY,linkContact);
+                    //startActivity(intent);
+                }
                 return false;
             }
         });
 
+
     }
+
     @Override
     protected void onStop() {
         super.onStop();
     }
+
     private void initDialog(int gravity) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -106,7 +113,7 @@ public class MainMenu extends AppCompatActivity {
 
         play.setOnClickListener(v -> {
             String nameSave = nameEdt.getText().toString();
-            if(nameSave.compareTo("") == 0) {
+            if (nameSave.compareTo("") == 0) {
                 nameSave = "Annoy";
             }
             Intent intent = new Intent(MainMenu.this, GameActivity.class);

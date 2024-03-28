@@ -7,8 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 
-import kotlinx.coroutines.internal.ContextScope;
-
 public class Bullet {
     Bitmap bullet1, bullet2, bullet3, bullet4;
     private int bulletCount = 0;
@@ -18,6 +16,7 @@ public class Bullet {
     private int y;
     private int rectConstraint;
     private MediaPlayer bulletSfx;
+
     public Bullet(Resources res, int width, int height, int x, int y, Context context) {
         bullet1 = BitmapFactory.decodeResource(res, R.drawable.bullet1);
         bullet2 = BitmapFactory.decodeResource(res, R.drawable.bullet2);
@@ -59,33 +58,34 @@ public class Bullet {
         return x;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
     public void setX(int x) {
         this.x = x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public void setY(int y) {
         this.y = y;
     }
 
+    public int getHeight() {
+        return height;
+    }
+
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     public void setWidth(int width) {
         this.width = width;
     }
+
     public void playShootSound() {
         bulletSfx.start();
     }

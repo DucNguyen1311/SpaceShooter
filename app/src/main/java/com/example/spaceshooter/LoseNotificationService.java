@@ -9,10 +9,11 @@ public class LoseNotificationService extends Service {
     public LoseNotificationService() {
 
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        Toast.makeText(this,"You are dead",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "You are dead", Toast.LENGTH_SHORT).show();
         stopSelf();
     }
 

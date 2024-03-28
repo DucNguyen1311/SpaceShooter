@@ -7,11 +7,10 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import java.security.Provider;
-
 public class BackgroundMusicService extends Service {
 
     MediaPlayer player;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -23,7 +22,7 @@ public class BackgroundMusicService extends Service {
         super.onCreate();
         player = MediaPlayer.create(this, R.raw.background);
         player.setLooping(true);
-        player.setVolume(80,80);
+        player.setVolume(80, 80);
         player.start();
     }
 

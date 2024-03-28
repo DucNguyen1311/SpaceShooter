@@ -6,14 +6,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-public final class scoreSaverTable extends SQLiteOpenHelper{
+public final class scoreSaverTable extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME ="scoreSaver";
+    private static final String DATABASE_NAME = "scoreSaver";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_NAME = "scores";
 
@@ -52,7 +51,7 @@ public final class scoreSaverTable extends SQLiteOpenHelper{
     public Score getHighestScore() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_NAME, new String [] {"MAX(score)"}, null, null, null, null, null);
+        Cursor cursor = db.query(TABLE_NAME, new String[]{"MAX(score)"}, null, null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
             Log.d("Highscore no error", " " + cursor.getInt(0));

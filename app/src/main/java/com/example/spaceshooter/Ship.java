@@ -6,18 +6,18 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 
 public class Ship {
+    boolean invincible;
+    Bitmap ship;
     private int x, y, width, height;
     private int health;
     private int invincibleTime;
-    boolean invincible;
-    Bitmap ship;
     private int rectConstraint;
 
-    public Ship(int screenX, int screenY, Resources res){
+    public Ship(int screenX, int screenY, Resources res) {
         ship = BitmapFactory.decodeResource(res, R.drawable.ourship);
         rectConstraint = 50;
         this.y = screenY - 256;
-        this.x = screenX/2;
+        this.x = screenX / 2;
 
         int i = 50;
         invincibleTime = 20;
@@ -36,6 +36,7 @@ public class Ship {
     public float getShipHeight() {
         return height;
     }
+
     Bitmap getShip() {
         return ship;
     }
@@ -44,12 +45,12 @@ public class Ship {
         return x;
     }
 
-    public float getY() {
-        return y;
-    }
-
     public void setX(int x) {
         this.x = x;
+    }
+
+    public float getY() {
+        return y;
     }
 
     public void setY(int y) {
@@ -70,6 +71,7 @@ public class Ship {
     public void forfeit() {
         this.health = 0;
     }
+
     public void getDirectHit() {
         health--;
     }
