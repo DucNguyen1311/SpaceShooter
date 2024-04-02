@@ -52,12 +52,12 @@ public final class scoreSaverTable extends SQLiteOpenHelper{
     public Score getHighestScore() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_NAME, new String [] {"MAX(score)"}, null, null, null, null, null);
+        Cursor cursor = db.rawQuery("SELECT *, MAX(score) FROM scores", null);
+
         if (cursor != null) {
             cursor.moveToFirst();
-            Log.d("Highscore no error", " " + cursor.getInt(0));
             db.close();
-            return new Score("annoy", cursor.getInt(0));
+            return new Score(cursor.getString(0), cursor.getInt(1));
         }
         Log.d("Highscore Error", "no Highscore Registered");
         db.close();

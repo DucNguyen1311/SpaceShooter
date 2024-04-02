@@ -20,9 +20,12 @@ import android.widget.SeekBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+
 public class MainMenu extends AppCompatActivity {
     Intent backGroundMusic;
     Intent lowBatteryNoti;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,10 @@ public class MainMenu extends AppCompatActivity {
                 stopService(lowBatteryNoti);
                 finish();
             }
+        });
+
+        findViewById(R.id.btn_Map).setOnClickListener(v -> {
+            startActivity(new Intent(MainMenu.this, MapsActivity.class));
         });
         findViewById(R.id.btn_menu).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +107,7 @@ public class MainMenu extends AppCompatActivity {
                 startActivity(new Intent(MainMenu.this, GameActivity.class));
             }
         });
+
         notInterested.setOnClickListener(v -> {
             dialog.dismiss();
         });
