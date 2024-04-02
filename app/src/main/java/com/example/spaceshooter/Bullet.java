@@ -10,6 +10,8 @@ import android.media.MediaPlayer;
 import kotlinx.coroutines.internal.ContextScope;
 
 public class Bullet {
+    public final int BULLET_OURSHIP = 1;
+    public final int BULLET_ENEMY_SHIP = 2;
     Bitmap bullet1, bullet2, bullet3, bullet4;
     private int bulletCount = 0;
     private int width;
@@ -18,11 +20,19 @@ public class Bullet {
     private int y;
     private int rectConstraint;
     private MediaPlayer bulletSfx;
-    public Bullet(Resources res, int width, int height, int x, int y, Context context) {
-        bullet1 = BitmapFactory.decodeResource(res, R.drawable.bullet1);
-        bullet2 = BitmapFactory.decodeResource(res, R.drawable.bullet2);
-        bullet3 = BitmapFactory.decodeResource(res, R.drawable.bullet3);
-        bullet4 = BitmapFactory.decodeResource(res, R.drawable.bullet4);
+    public Bullet(Resources res, int width, int height, int x, int y, Context context, int CODE) {
+        if (CODE == BULLET_OURSHIP) {
+            bullet1 = BitmapFactory.decodeResource(res, R.drawable.bullet1);
+            bullet2 = BitmapFactory.decodeResource(res, R.drawable.bullet2);
+            bullet3 = BitmapFactory.decodeResource(res, R.drawable.bullet3);
+            bullet4 = BitmapFactory.decodeResource(res, R.drawable.bullet4);
+        }
+        if (CODE == BULLET_ENEMY_SHIP) {
+            bullet1 = BitmapFactory.decodeResource(res, R.drawable.bulletenemy1);
+            bullet2 = BitmapFactory.decodeResource(res, R.drawable.bulletenemy2);
+            bullet3 = BitmapFactory.decodeResource(res, R.drawable.bulletenemy1);
+            bullet4 = BitmapFactory.decodeResource(res, R.drawable.bulletenemy2);
+        }
         int i = 50;
         bulletSfx = MediaPlayer.create(context, R.raw.shoot);
         this.width = i + width;
@@ -91,6 +101,6 @@ public class Bullet {
     }
 
     public Rect getRect() {
-        return new Rect(x + rectConstraint, y + rectConstraint, x + width - rectConstraint, y + height - rectConstraint);
+        return new Rect(x + rectConstraint + 20, y + rectConstraint, x + width - rectConstraint, y + height - rectConstraint);
     }
 }

@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.spaceshooter">
+    package="com.example.spaceshooter" >
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Include only if your app benefits from precise location access. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <permission
         android:name="com.example.spaceshooter.scoreSaverProvider.WRITE_DATABASE"
         android:label="Write Database"
         android:protectionLevel="normal" />
-
     <permission
         android:name="com.example.spaceshooter.scoreSaverProvider.READ_DATABASE"
         android:label="Read Database"
@@ -17,9 +22,30 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ourship"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/Theme.AppCompat.NoActionBar" >
 
-        <provider android:name="com.example.spaceshooter.scoreSaverProvider"
+        <!--
+             TODO: Before you run your application, you need a Google Maps API key.
+
+             To get one, follow the directions here:
+
+                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+             Once you have your API key (it starts with "AIza"), define a new property in your
+             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+        <activity
+            android:name=".MapsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_maps" />
+
+        <provider
+            android:name=".scoreSaverProvider"
             android:authorities="com.example.spaceshooter.scoreSaverProvider"
             android:enabled="true"
             android:exported="true" >
@@ -28,19 +54,24 @@
         <service
             android:name=".LoseNotificationService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".LowBatteryNotification"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".BackgroundMusicService"
             android:exported="false" />
-        <activity android:name=".GameActivity" android:launchMode="singleTask"/>
-        <activity android:name=".SettingMenu" android:launchMode="singleTask"/>
+
+        <activity
+            android:name=".GameActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".SettingMenu"
+            android:launchMode="singleTask" />
         <activity
             android:name=".MainMenu"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
