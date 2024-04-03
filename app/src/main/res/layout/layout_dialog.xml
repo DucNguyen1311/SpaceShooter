@@ -2,62 +2,68 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="16dp"
     android:background="@drawable/dialog_bgr"
-    android:orientation="vertical"
-    android:layout_margin="16dp">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bgr_black"
+        android:gravity="center"
         android:padding="12dp"
         android:text="Type your name to save highscore"
-        android:textSize="23dp"
         android:textColor="@color/white"
-        android:gravity="center"
-        android:background="@drawable/dialog_bgr_black"/>
+        android:textSize="23dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Click play to play"
             android:gravity="center"
-            android:textSize="20dp"
-            android:textColor="@android:color/black"/>
+            android:text="Click play to play"
+            android:textColor="@android:color/black"
+            android:textSize="20dp" />
+
         <EditText
             android:id="@+id/dialog_nameTyper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:textColor="@color/black"
-            android:background="@drawable/dialog_bgr_grey"
             android:layout_marginTop="16dp"
-            android:hint="Your name"/>
+            android:background="@drawable/dialog_bgr_grey"
+            android:hint="Your name"
+            android:padding="12dp"
+            android:textColor="@color/black" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/dialog_NotInterested"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="20dp"
             android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_bgr_black_10dp"
             android:text="Not Intersted"
-            android:background="@drawable/dialog_bgr_black_10dp"/>
+            android:textSize="20dp" />
+
         <Button
             android:id="@+id/dialog_Play"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="20dp"
+            android:background="@drawable/dialog_bgr_black_10dp"
             android:text="Play"
-            android:background="@drawable/dialog_bgr_black_10dp"/>
+            android:textSize="20dp" />
     </LinearLayout>
 </LinearLayout>

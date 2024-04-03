@@ -25,22 +25,23 @@
 
     <TextView
         android:id="@+id/score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="511dp"
+        android:layout_height="56dp"
         android:layout_marginStart="58dp"
-        android:layout_marginTop="43dp"
+        android:layout_marginTop="48dp"
         android:layout_marginEnd="156dp"
         android:text="Your Score:"
         android:textSize="40dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.133"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gameOver" />
 
     <TextView
         android:id="@+id/highestScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="506dp"
+        android:layout_height="57dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="36dp"
         android:layout_marginEnd="141dp"
@@ -50,13 +51,14 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/Holder"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/score" />
 
     <TextView
         android:id="@+id/Holder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="313dp"
+        android:layout_height="46dp"
         android:layout_marginStart="66dp"
         android:layout_marginTop="31dp"
         android:layout_marginEnd="226dp"
@@ -66,7 +68,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btn_play_again"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.257"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/highestScore" />
 

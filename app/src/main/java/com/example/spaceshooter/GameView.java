@@ -246,6 +246,8 @@ public class GameView extends SurfaceView implements Runnable {
             i.putExtra("playerScore", playerScore);
             i.putExtra("highestScore", Highscore);
             i.putExtra("getholder", HighscoreHolder);
+            Log.d("bundle: " , playerScore + " " + Highscore + " " + HighscoreHolder);
+            contextGame.startActivity(i);
             ((Activity)getContext()).finish();
             Log.d("Player Score is: ", " " + playerScore);
         }
@@ -351,7 +353,7 @@ public class GameView extends SurfaceView implements Runnable {
                 Rect a = asteroid.getRect();
                 Rect b = bullet.getRect();
                 Rect c = ourShip.getRect();
-                if (a.intersect(b) && entry.getValue() == BULLET_STRAIGHT) {
+                if (a.intersect(b) && (entry.getValue() == BULLET_STRAIGHT || entry.getValue() == BULLET_LEFT_30_DEGREE || entry.getValue() == BULLET_RIGHT_30_DEGREE)) {
                     bullets.remove(bullet);
                     explosions.add(new Explosion(getResources(), bullet.getX(), bullet.getY() - 50) );
                     asteroid.setExplode(true);
@@ -512,6 +514,7 @@ public class GameView extends SurfaceView implements Runnable {
             if (tripleShootCounter == 0) {
                 tripleShootCounter = 200;
                 isTripleShooted = false;
+                Log.d("triple shoot", "Ended");
             }
         }
         if (isDoubleShooted) {

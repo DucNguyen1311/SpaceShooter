@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Include only if your app benefits from precise location access. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <permission
         android:name="com.example.spaceshooter.scoreSaverProvider.WRITE_DATABASE"
@@ -41,6 +42,9 @@
             android:name=".MapsActivity"
             android:exported="true"
             android:label="@string/title_activity_maps" />
+        <activity
+            android:name=".webViewActivity"
+            android:exported="true"/>
 
         <provider
             android:name=".scoreSaverProvider"
