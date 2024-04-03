@@ -12,6 +12,8 @@ import kotlinx.coroutines.internal.ContextScope;
 public class Bullet {
     public final int BULLET_OURSHIP = 1;
     public final int BULLET_ENEMY_SHIP = 2;
+    public final int BULLET_LEFT = 3;
+    public final int BULLET_RIGHT = 4;
     Bitmap bullet1, bullet2, bullet3, bullet4;
     private int bulletCount = 0;
     private int width;
@@ -32,6 +34,18 @@ public class Bullet {
             bullet2 = BitmapFactory.decodeResource(res, R.drawable.bulletenemy2);
             bullet3 = BitmapFactory.decodeResource(res, R.drawable.bulletenemy1);
             bullet4 = BitmapFactory.decodeResource(res, R.drawable.bulletenemy2);
+        }
+        if (CODE == BULLET_LEFT) {
+            bullet1 = BitmapFactory.decodeResource(res, R.drawable.bullet1left);
+            bullet2 = BitmapFactory.decodeResource(res, R.drawable.bullet2left);
+            bullet3 = BitmapFactory.decodeResource(res, R.drawable.bullet3left);
+            bullet4 = BitmapFactory.decodeResource(res, R.drawable.bullet4left);
+        }
+        if (CODE == BULLET_RIGHT) {
+            bullet1 = BitmapFactory.decodeResource(res, R.drawable.bullet1right);
+            bullet2 = BitmapFactory.decodeResource(res, R.drawable.bullet2right);
+            bullet3 = BitmapFactory.decodeResource(res, R.drawable.bullet3right);
+            bullet4 = BitmapFactory.decodeResource(res, R.drawable.bullet4right);
         }
         int i = 50;
         bulletSfx = MediaPlayer.create(context, R.raw.shoot);
@@ -101,6 +115,6 @@ public class Bullet {
     }
 
     public Rect getRect() {
-        return new Rect(x + rectConstraint + 20, y + rectConstraint, x + width - rectConstraint, y + height - rectConstraint);
+        return new Rect(x + rectConstraint + 40, y + rectConstraint + 40, x + width - rectConstraint - 40 , y + height - rectConstraint - 40);
     }
 }

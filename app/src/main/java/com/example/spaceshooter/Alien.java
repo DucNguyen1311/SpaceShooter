@@ -1,17 +1,17 @@
 package com.example.spaceshooter;
 
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 
 public class Alien {
-    private int health;
     private int x;
     private int y;
 
+    MediaPlayer explodingSfx;
     private int rectConstraint;
-    public Alien(int x, int y, int health) {
+    public Alien(int x, int y) {
         this.x = x;
         this.y = y;
-        this.health = health;
         this.rectConstraint = 50;
     }
 
@@ -35,7 +35,4 @@ public class Alien {
         return rectConstraint;
     }
 
-    public int getHealth() {
-        return health;
-    }
 }

@@ -14,20 +14,18 @@ public class AlienNormalShip extends Alien{
     private int height;
     private int width;
     private int counter;
-    MediaPlayer explodingSfx;
-
     private int xVector;
     private int yVector;
 
 
     public AlienNormalShip(int x, Resources res, Context context) {
-        super(x,0, 1);
+        super(x,0);
         btmp1 = BitmapFactory.decodeResource(res, R.drawable.enemyalien1);
         btmp2 = BitmapFactory.decodeResource(res, R.drawable.enemyalien2);
         this.height = btmp1.getHeight() + 50;
         this.width = btmp1.getWidth() + 50;
         counter = 0;
-        explodingSfx = MediaPlayer.create(context,R.raw.exploding );
+        super.explodingSfx = MediaPlayer.create(context,R.raw.exploding );
         xVector = 10;
         yVector = 5;
         btmp1 = Bitmap.createScaledBitmap(btmp1, width, height, false);

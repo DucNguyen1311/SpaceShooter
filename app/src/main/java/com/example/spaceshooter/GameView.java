@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.content.Intent.getIntent;
 import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
 import static androidx.core.content.ContextCompat.getSystemService;
+import static androidx.core.content.ContextCompat.startActivity;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -42,10 +43,17 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameView extends SurfaceView implements Runnable {
+    private boolean isShielded;
+    private boolean isDoubleShooted;
+    private boolean isTripleShooted;
+    private boolean isEnded;
     private final int BULLET_STRAIGHT = 1;
     private final int BULLET_DOWN = 2;
     private final int BULLET_LEFT_30_DEGREE = 3;
     private final int BULLET_RIGHT_30_DEGREE = 4;
+
+    private int tripleShootCounter;
+    private int doubleShootCounter;
 
     private int playerScore, Highscore;
     private int bulletSleep;
@@ -58,23 +66,31 @@ public class GameView extends SurfaceView implements Runnable {
     private Thread thread;
     private int screenX, screenY;
     private int asteroidSize;
+    private shield shield;
     private Map<Bullet, Integer> bullets;
     private ArrayList<Asteroid> asteroids;
     private ArrayList<Explosion> explosions;
     private ArrayList<Alien> aliens;
+    private ArrayList<powerUpBall> powerUpBalls;
     scoreSaverTable helper;
     String playerName;
     String HighscoreHolder;
+
+    healthBar healthBar;
 
     SQLiteDatabase database;
     private Context contextGame;
     public GameView (Context context, int screenX, int screenY, String name) {
         super(context);
+        isShielded = false;
+        shield = new shield(getResources());
+        healthBar = new healthBar(getResources());
         helper = new scoreSaverTable(context);
         contextGame = context;
         bullets = new ConcurrentHashMap<>();
         asteroids = new ArrayList<Asteroid>();
         explosions = new ArrayList<>();
+        powerUpBalls = new ArrayList<>();
         aliens = new ArrayList<>();
         Log.i("ihatemyself", name);
         playerName = name;
@@ -148,14 +164,23 @@ public class GameView extends SurfaceView implements Runnable {
                     AlienNormalShip drawAlien = (AlienNormalShip) alien;
                     canvas.drawBitmap(drawAlien.getBitmap(), drawAlien.getX(), drawAlien.getY(), null);
                 }
+                if (alien.getClass() == AlienBattleShip.class) {
+                    AlienBattleShip drawAlien = (AlienBattleShip) alien;
+                    canvas.drawBitmap(drawAlien.getBitmap(), drawAlien.getX(), drawAlien.getY(), null);
+
+                }
+            }
+            for (powerUpBall powerUpBall : powerUpBalls) {
+                canvas.drawBitmap(powerUpBall.getBitmap(), powerUpBall.getX(), powerUpBall.getY(), null);
+            }
+            if (isShielded) {
+                canvas.drawBitmap(shield.getBitmap(), ourShip.getX() - 10, ourShip.getY(), null);
             }
             Paint paint1 = new Paint();
             paint1.setColor(Color.WHITE);
             paint1.setTextSize(70);
-            canvas.drawText("Health: " + ourShip.getHealth(), 30, 80, paint1);
+            canvas.drawBitmap(healthBar.getBitmap(), 50, 50, null);
             canvas.drawText("Score: " + playerScore, screenX - 550, 80, paint1);
-            canvas.drawText("High Score: " + Highscore, screenX - 550, 160, paint1);
-            canvas.drawText("Highscore Holder: " + HighscoreHolder, screenX - 800, 240, paint1);
             getHolder().unlockCanvasAndPost(canvas);
         }
 
@@ -216,10 +241,30 @@ public class GameView extends SurfaceView implements Runnable {
             bullets.clear();
             Intent intent = new Intent(contextGame, LoseNotificationService.class);
             contextGame.startService(intent);
+            isEnded = true;
+            Intent i = new Intent(contextGame, Game_Over.class);
+            i.putExtra("playerScore", playerScore);
+            i.putExtra("highestScore", Highscore);
+            i.putExtra("getholder", HighscoreHolder);
+            ((Activity)getContext()).finish();
             Log.d("Player Score is: ", " " + playerScore);
-            Thread.sleep(2000);
-            ((Activity) getContext()).finish();
         }
+    }
+
+    public boolean isEnded() {
+        return isEnded;
+    }
+
+    public int getHighscore() {
+        return Highscore;
+    }
+
+    public int getPlayerScore() {
+        return playerScore;
+    }
+
+    public String getHighscoreHolder() {
+        return HighscoreHolder;
     }
 
     private void updateState() {
@@ -232,6 +277,15 @@ public class GameView extends SurfaceView implements Runnable {
             if (entry.getValue() == BULLET_DOWN) {
                 entry.getKey().setY(entry.getKey().getY() + 20);
             }
+            if (entry.getValue() == BULLET_LEFT_30_DEGREE) {
+                entry.getKey().setY(entry.getKey().getY() - 20);
+                entry.getKey().setX(entry.getKey().getX() - 13);
+            }
+            if (entry.getValue() == BULLET_RIGHT_30_DEGREE) {
+                entry.getKey().setY(entry.getKey().getY() - 20);
+                entry.getKey().setX(entry.getKey().getX() + 13);
+            }
+
         }
 
         for (int i = 0; i < aliens.size(); i++) {
@@ -246,13 +300,29 @@ public class GameView extends SurfaceView implements Runnable {
                 enemy.setX(enemy.getX() + enemy.getxVector());
                 enemy.setY(enemy.getY() + enemy.getyVector());
             }
+            if (aliens.get(i).getClass() == AlienBattleShip.class) {
+                AlienBattleShip alienBattleShip = (AlienBattleShip) aliens.get(i);
+                if (alienBattleShip.isStillAlive()) {
+                    alienBattleShip.liveCounter();
+                } else {
+                    aliens.remove(alienBattleShip);
+                }
+            }
+        }
+
+        for (int i = 0 ; i < powerUpBalls.size(); i++) {
+            powerUpBall powerUpBall = powerUpBalls.get(i);
+            if (powerUpBall.getY() + powerUpBall.getHeight() > screenY) {
+                powerUpBalls.remove(powerUpBall);
+                continue;
+            }
+            powerUpBall.setY(powerUpBall.getY() + 10);
         }
 
         for (int i = 0; i < asteroids.size(); i++) {
             Asteroid asteroid = asteroids.get(i);
             if (asteroid.getY() + asteroid.getHeight() > screenY) {
                 asteroids.remove(asteroids.get(i));
-                ourShip.getDirectHit();
                 continue;
             }
             // this if statement is used to check if the asteroid is fully exploded;
@@ -292,17 +362,31 @@ public class GameView extends SurfaceView implements Runnable {
                         HighscoreHolder = playerName;
                     }
                 }
-                if (b.intersect(a) && entry.getValue() == BULLET_DOWN) {
+                if (b.intersect(c) && entry.getValue() == BULLET_DOWN) {
                     bullets.remove(bullet);
                     explosions.add(new Explosion(getResources(), (int) ourShip.getX(), (int) (ourShip.getY()-50)));
-                    ourShip.getHit();
+                    if (!isShielded) {
+                        if (!ourShip.isInvincible()) {
+                            healthBar.increaseCounter();
+                        }
+                        ourShip.getHit();
+                    }
+                    Log.d("Get hit", "intersect with enemy bullet");
                 }
                 if (a.intersect(c)) {
                     asteroid.setExplode(true);
                     explosions.add(new Explosion(getResources(), (int) ourShip.getX(), (int) (ourShip.getY()-50)));
-                    ourShip.getHit();
+                    asteroid.playExplodingSound();
+                    if (!isShielded) {
+                        if (!ourShip.isInvincible()) {
+                            healthBar.increaseCounter();
+                        }
+                        ourShip.getHit();
+                    }
+                    Log.d("Get hit", "intersect with asteroid");
                 }
             }
+
             for (int i = 0; i < aliens.size(); i++) {
                 Alien alien = aliens.get(i);
                 if (alien.getClass() == AlienNormalShip.class) {
@@ -312,8 +396,14 @@ public class GameView extends SurfaceView implements Runnable {
                     Rect c = ourShip.getRect();
                     if (a.intersect(b) && entry.getValue() == BULLET_STRAIGHT) {
                         bullets.remove(bullet);
+                        Random rand = new Random();
+                        int n = rand.nextInt(2);
+                        if (n == 1) {
+                            powerUpBalls.add(new powerUpBall(getResources(), alien.getX(), alien.getY()));
+                        }
                         explosions.add(new Explosion(getResources(), bullet.getX(), bullet.getY() - 50) );
                         aliens.remove(alien);
+                        enemy.playExplodingSound();
                         playerScore += 200;
                         if (playerScore>Highscore) {
                             Highscore = playerScore;
@@ -323,7 +413,46 @@ public class GameView extends SurfaceView implements Runnable {
                     if (a.intersect(c)) {
                         aliens.remove(alien);
                         explosions.add(new Explosion(getResources(), (int) ourShip.getX(), (int) (ourShip.getY()-50)));
-                        ourShip.getHit();
+                        if (!isShielded) {
+                            if (!ourShip.isInvincible()) {
+                                healthBar.increaseCounter();
+                            }
+                            ourShip.getHit();
+                        }
+                        enemy.playExplodingSound();
+                        Log.d("Get hit", "Intersect with enemy");
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < powerUpBalls.size(); i++) {
+            powerUpBall powerUpBall = powerUpBalls.get(i);
+            Rect a = powerUpBall.getRect();
+            Rect b = ourShip.getRect();
+            if (a.intersect(b)) {
+                Log.d("intersect", "powerBall collected");
+                powerUpBalls.remove(powerUpBall);
+                Random rand = new Random();
+                int n = rand.nextInt(3);
+                if (n == 0) {
+                    if (isShielded) {
+                        shield.resetTimer();
+                    } else {
+                        isShielded = true;
+                    }
+                }
+                if (n == 1) {
+                    if (isDoubleShooted) {
+                        doubleShootCounter = 200;
+                    } else {
+                        isDoubleShooted = true;
+                    }
+                }
+                else {
+                    if (isTripleShooted) {
+                        tripleShootCounter = 200;
+                    } else {
+                            isTripleShooted = true;
                     }
                 }
             }
@@ -338,10 +467,12 @@ public class GameView extends SurfaceView implements Runnable {
             enemySleep = 20;
             Random generator = new Random();
             int rng = generator.nextInt(100);
-            if (rng < 80) {
+            if (rng < 75) {
                 spawnAsteroid();
-            } else {
+            } else if (rng < 95){
                 spawnAlienNormalShip();
+            } else {
+                spawnBattleShip();
             }
         }
     }
@@ -360,8 +491,36 @@ public class GameView extends SurfaceView implements Runnable {
         aliens.add(alien);
     }
 
+    private void spawnBattleShip() {
+        Random generator = new Random();
+        int spawnPoint = generator.nextInt((screenX - asteroidSize - 30) + 1 ) + 30;
+        AlienBattleShip alien = new AlienBattleShip(spawnPoint, getResources(), contextGame);
+        aliens.add(alien);
+    }
+
     private void coldown() {
         ourShip.coldDown();
+        if (isShielded) {
+            shield.countingShield();
+            if (shield.isEnded()) {
+                isShielded = false;
+                shield.setEnded(false);
+            }
+        }
+        if (isTripleShooted) {
+            tripleShootCounter--;
+            if (tripleShootCounter == 0) {
+                tripleShootCounter = 200;
+                isTripleShooted = false;
+            }
+        }
+        if (isDoubleShooted) {
+            doubleShootCounter--;
+            if (doubleShootCounter == 0) {
+                doubleShootCounter = 200;
+                isDoubleShooted = false;
+            }
+        }
     }
 
     private void movingBackGround() {
@@ -378,17 +537,56 @@ public class GameView extends SurfaceView implements Runnable {
     private void bulletSpawnCalculator() {
         if (bulletSleep > 0) {
             bulletSleep--;
+        } else if(isDoubleShooted && isTripleShooted) {
+            bulletSleep = 20;
+            Bullet bulletMid1 = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX(), (int) ourShip.getY(), contextGame, 1);
+            Bullet bulletMid2 = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX() + 30, (int) ourShip.getY(), contextGame, 1);
+            Bullet bulletMid3 = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX() - 30, (int) ourShip.getY(), contextGame, 1);
+            Bullet bulletLeft = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX() - 60, (int) ourShip.getY(), contextGame, 3);
+            Bullet bulletRight = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX() + 60, (int) ourShip.getY(), contextGame, 4);
+            bulletMid1.playShootSound();
+            bullets.put(bulletMid1, BULLET_STRAIGHT);
+            bullets.put(bulletMid2, BULLET_STRAIGHT);
+            bullets.put(bulletMid3, BULLET_STRAIGHT);
+            bullets.put(bulletLeft, BULLET_LEFT_30_DEGREE);
+            bullets.put(bulletRight, BULLET_RIGHT_30_DEGREE);
+        } else if (isTripleShooted) {
+            bulletSleep = 20;
+            Bullet bulletMid1 = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX(), (int) ourShip.getY(), contextGame, 1);
+            Bullet bulletLeft = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX() - 30, (int) ourShip.getY(), contextGame, 3);
+            Bullet bulletRight = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX() + 30, (int) ourShip.getY(), contextGame, 4);
+            bulletMid1.playShootSound();
+            bullets.put(bulletMid1, BULLET_STRAIGHT);
+            bullets.put(bulletLeft, BULLET_LEFT_30_DEGREE);
+            bullets.put(bulletRight, BULLET_RIGHT_30_DEGREE);
+        } else if (isDoubleShooted) {
+            bulletSleep = 20;
+            Bullet bulletMid2 = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX() + 30, (int) ourShip.getY(), contextGame, 1);
+            Bullet bulletMid3 = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX() - 30, (int) ourShip.getY(), contextGame, 1);
+            bulletMid2.playShootSound();
+            bullets.put(bulletMid2, BULLET_STRAIGHT);
+            bullets.put(bulletMid3, BULLET_STRAIGHT);
         } else {
             bulletSleep = 20;
             Bullet bullet = new Bullet(getResources(), (int) ourShip.getShipWidth(), (int) ourShip.getShipHeight(), (int) ourShip.getX(), (int) ourShip.getY(), contextGame, 1);
             bullet.playShootSound();
             bullets.put(bullet, BULLET_STRAIGHT);
+        }
+        if (bulletSleep == 20) {
             for (int i = 0; i < aliens.size(); i++) {
                 if (aliens.get(i).getClass() == AlienNormalShip.class) {
                     AlienNormalShip enemy = (AlienNormalShip) aliens.get(i);
                     Bullet bulletEnemy = new Bullet(getResources(), (int) enemy.getWidth(), (int) enemy.getHeight(), (int) enemy.getX(), (int) enemy.getY(), contextGame, 2);
-                    bullet.playShootSound();
+                    bulletEnemy.playShootSound();
                     bullets.put(bulletEnemy, BULLET_DOWN);
+                }
+                if (aliens.get(i).getClass() == AlienBattleShip.class) {
+                    AlienBattleShip enemy = (AlienBattleShip) aliens.get(i);
+                    Bullet bulletEnemyLeft = new Bullet(getResources(), (int) enemy.getWidth() - 100, (int) enemy.getHeight() - 50, (int) enemy.getX() - 50, (int) enemy.getY(), contextGame, 2);
+                    Bullet bulletEnemyRight = new Bullet(getResources(), (int) enemy.getWidth() - 100, (int) enemy.getHeight() - 50, (int) enemy.getX() + 30, (int) enemy.getY(), contextGame, 2);
+                    bulletEnemyRight.playShootSound();
+                    bullets.put(bulletEnemyLeft, BULLET_DOWN);
+                    bullets.put(bulletEnemyRight, BULLET_DOWN);
                 }
             }
         }
