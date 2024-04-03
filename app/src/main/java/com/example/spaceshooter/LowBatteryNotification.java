@@ -7,8 +7,6 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import java.security.Provider;
-
 public class LowBatteryNotification extends Service {
     @Nullable
     @Override
@@ -21,7 +19,7 @@ public class LowBatteryNotification extends Service {
         super.onCreate();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_BATTERY_LOW);
-        LowBatteryBroadcastReceiver lowBatteryBroadcastReceiver= new LowBatteryBroadcastReceiver();
+        LowBatteryBroadcastReceiver lowBatteryBroadcastReceiver = new LowBatteryBroadcastReceiver();
         registerReceiver(lowBatteryBroadcastReceiver, intentFilter);
     }
 }

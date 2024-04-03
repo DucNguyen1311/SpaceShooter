@@ -6,24 +6,23 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
-import android.provider.MediaStore;
 
 public class Asteroid {
     int explodeSequence = 13;
-    int x,y;
+    int x, y;
     int width, height;
     boolean isExplode;
     boolean exploded;
     Bitmap asteroid;
     Bitmap explode1, explode2, explode3, explode4;
-    private int rectConstraint;
     MediaPlayer explodingSfx;
+    private int rectConstraint;
 
     public Asteroid(int x, Resources res, Context context) {
         this.x = x;
         this.y = 0;
         rectConstraint = 50;
-        explodingSfx = MediaPlayer.create(context,R.raw.exploding );
+        explodingSfx = MediaPlayer.create(context, R.raw.exploding);
         asteroid = BitmapFactory.decodeResource(res, R.drawable.asteroid);
         explode1 = BitmapFactory.decodeResource(res, R.drawable.explode1);
         explode2 = BitmapFactory.decodeResource(res, R.drawable.explode2);
@@ -44,8 +43,16 @@ public class Asteroid {
         return x;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
     public int getY() {
         return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     public int getHeight() {
@@ -56,16 +63,8 @@ public class Asteroid {
         return width;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
     public Bitmap getBitmap() {
-        if(isExplode) {
+        if (isExplode) {
             if (explodeSequence == 2) {
                 exploded = true;
             }
@@ -86,26 +85,27 @@ public class Asteroid {
         return asteroid;
     }
 
-    public void playExplodingSound(){
+    public void playExplodingSound() {
         explodingSfx.start();
     }
+
     public Rect getRect() {
         return new Rect(x + rectConstraint, y + rectConstraint, x + width - rectConstraint, y + height - rectConstraint);
-    }
-
-    public void setExplode(boolean explode) {
-        this.isExplode = explode;
-    }
-
-    public void setExploded(boolean exploded) {
-        this.exploded = exploded;
     }
 
     public boolean isExplode() {
         return isExplode;
     }
 
+    public void setExplode(boolean explode) {
+        this.isExplode = explode;
+    }
+
     public boolean isExploded() {
         return exploded;
+    }
+
+    public void setExploded(boolean exploded) {
+        this.exploded = exploded;
     }
 }

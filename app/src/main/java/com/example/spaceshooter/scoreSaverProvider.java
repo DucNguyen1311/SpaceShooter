@@ -19,15 +19,16 @@ import java.util.HashMap;
 
 public class scoreSaverProvider extends ContentProvider {
     static final String AUTHORITY = "com.example.spaceshooter.scoreSaverProvider";
-    static final String CONTENT_PATH =  "backupdata";
+    static final String CONTENT_PATH = "backupdata";
     static final String URL = "content://" + AUTHORITY + "/" + CONTENT_PATH;
     static final Uri CONTENT_URI = Uri.parse(URL);
-    private static final String TABLE_NAME = "scores";
-    private static HashMap<String, String> SCORE_PROJECTION_MAP;
     static final int URI_ALL_ITEMS_CODE = 1;
     static final int URI_ONE_ITEM_CODE = 2;
     static final UriMatcher uriMatcher;
-    static{
+    private static final String TABLE_NAME = "scores";
+    private static HashMap<String, String> SCORE_PROJECTION_MAP;
+
+    static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, CONTENT_PATH, URI_ALL_ITEMS_CODE);
         uriMatcher.addURI(AUTHORITY, CONTENT_PATH + "/#", URI_ONE_ITEM_CODE);
@@ -35,6 +36,7 @@ public class scoreSaverProvider extends ContentProvider {
 
 
     private SQLiteDatabase db;
+
     @Override
     public boolean onCreate() {
         scoreSaverTable database = new scoreSaverTable(getContext());
@@ -54,21 +56,21 @@ public class scoreSaverProvider extends ContentProvider {
                 break;
 
             case URI_ONE_ITEM_CODE:
-                qb.appendWhere( "name" + "=" + uri.getPathSegments().get(1));
+                qb.appendWhere("name" + "=" + uri.getPathSegments().get(1));
                 break;
 
             default:
         }
 
-        if (sortOrder == null || sortOrder == ""){
+        if (sortOrder == null || sortOrder == "") {
             /**
              * By default sort on student names
              */
             sortOrder = "name";
         }
 
-        Cursor c = qb.query(db,	projection,	selection,
-                selectionArgs,null, null, sortOrder);
+        Cursor c = qb.query(db, projection, selection,
+                selectionArgs, null, null, sortOrder);
         /**
          * register to watch a content URI for changes
          */
@@ -101,14 +103,14 @@ public class scoreSaverProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int count = 0;
-        switch (uriMatcher.match(uri)){
+        switch (uriMatcher.match(uri)) {
             case URI_ALL_ITEMS_CODE:
                 count = db.delete(TABLE_NAME, selection, selectionArgs);
                 break;
 
             case URI_ONE_ITEM_CODE:
                 String id = uri.getPathSegments().get(1);
-                count = db.delete(TABLE_NAME, "name" +  " = " + id +
+                count = db.delete(TABLE_NAME, "name" + " = " + id +
                         (!TextUtils.isEmpty(selection) ? "AND (" + selection + ')' : ""), selectionArgs);
                 break;
             default:
@@ -130,10 +132,10 @@ public class scoreSaverProvider extends ContentProvider {
             case URI_ONE_ITEM_CODE:
                 count = db.update(TABLE_NAME, values,
                         "name" + " = " + uri.getPathSegments().get(1) +
-                                (!TextUtils.isEmpty(selection) ? "AND (" +selection + ')' : ""), selectionArgs);
+                                (!TextUtils.isEmpty(selection) ? "AND (" + selection + ')' : ""), selectionArgs);
                 break;
             default:
-                throw new IllegalArgumentException("Unknown URI " + uri );
+                throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
