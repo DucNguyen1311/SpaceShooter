@@ -6,8 +6,6 @@ import android.media.MediaPlayer;
 public class Alien {
     private int x;
     private int y;
-
-    MediaPlayer explodingSfx;
     private int rectConstraint;
     public Alien(int x, int y) {
         this.x = x;

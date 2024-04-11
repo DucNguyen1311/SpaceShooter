@@ -25,7 +25,6 @@ public class AlienNormalShip extends Alien{
         this.height = btmp1.getHeight() + 50;
         this.width = btmp1.getWidth() + 50;
         counter = 0;
-        super.explodingSfx = MediaPlayer.create(context,R.raw.exploding );
         xVector = 10;
         yVector = 5;
         btmp1 = Bitmap.createScaledBitmap(btmp1, width, height, false);
@@ -47,9 +46,6 @@ public class AlienNormalShip extends Alien{
         return null;
     }
 
-    public void playExplodingSound() {
-        explodingSfx.start();
-    }
     public int getWidth() {
         return width;
     }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/a"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/space">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="375dp"
+        android:layout_height="578dp"
+        android:text="Your are a warrior in a middle of a space battle. move to dodge bullet and asteroids, shooting down alien ship sometime grant you a power up. Beware for alien battleship! they will occasionally show up and bombarded a region with their supreme fire power. THEY CANNOT BE DESTROYED! JUST DODGE! There are 3 types of powerup, triple shoot, double shoot and shield. GOOD LUCK CAPTAIN!"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        tools:layout_editor_absoluteX="19dp"
+        tools:layout_editor_absoluteY="34dp" />
+
+    <Button
+        android:id="@+id/back_from_manual"
+        android:layout_width="128dp"
+        android:layout_height="77dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="262dp"
+        android:layout_marginBottom="27dp"
+        android:text="back"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+</androidx.constraintlayout.widget.ConstraintLayout>

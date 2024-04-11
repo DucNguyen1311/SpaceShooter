@@ -51,6 +51,7 @@ public class GameView extends SurfaceView implements Runnable {
     private final int BULLET_DOWN = 2;
     private final int BULLET_LEFT_30_DEGREE = 3;
     private final int BULLET_RIGHT_30_DEGREE = 4;
+    MediaPlayer explodingfxs;
 
     private int tripleShootCounter;
     private int doubleShootCounter;
@@ -95,7 +96,7 @@ public class GameView extends SurfaceView implements Runnable {
         Log.i("ihatemyself", name);
         playerName = name;
         Score score = helper.getHighestScore();
-
+        explodingfxs = MediaPlayer.create(contextGame, R.raw.exploding);
         if(score != null) {
             Highscore = score.getScore();
             HighscoreHolder = score.getName();
@@ -230,6 +231,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
     private void gameOverClause() throws InterruptedException {
         if (ourShip.getHealthAsInt() < 1) {
+            explodingfxs.release();
             helper.addNewScore(new Score(playerName, playerScore));
             Canvas canvas = getHolder().lockCanvas();
             Paint paint1 = new Paint();
@@ -349,16 +351,17 @@ public class GameView extends SurfaceView implements Runnable {
                 bullets.remove(bullet);
             }
             // this for loop is to check intersection of ship, asteroids and bullet
-            for (Asteroid asteroid : asteroids) {
+            for (int i = 0 ; i < asteroids.size(); i++) {
+                Asteroid asteroid = asteroids.get(i);
                 Rect a = asteroid.getRect();
                 Rect b = bullet.getRect();
                 Rect c = ourShip.getRect();
                 if (a.intersect(b) && (entry.getValue() == BULLET_STRAIGHT || entry.getValue() == BULLET_LEFT_30_DEGREE || entry.getValue() == BULLET_RIGHT_30_DEGREE)) {
                     bullets.remove(bullet);
                     explosions.add(new Explosion(getResources(), bullet.getX(), bullet.getY() - 50) );
-                    asteroid.setExplode(true);
+                    asteroids.remove(asteroid);
                     playerScore += 100;
-                    asteroid.playExplodingSound();
+                    explodingfxs.start();
                     if (playerScore>Highscore) {
                         Highscore = playerScore;
                         HighscoreHolder = playerName;
@@ -376,9 +379,9 @@ public class GameView extends SurfaceView implements Runnable {
                     Log.d("Get hit", "intersect with enemy bullet");
                 }
                 if (a.intersect(c)) {
-                    asteroid.setExplode(true);
+                    asteroids.remove(asteroid);
                     explosions.add(new Explosion(getResources(), (int) ourShip.getX(), (int) (ourShip.getY()-50)));
-                    asteroid.playExplodingSound();
+                    explodingfxs.start();
                     if (!isShielded) {
                         if (!ourShip.isInvincible()) {
                             healthBar.increaseCounter();
@@ -396,7 +399,7 @@ public class GameView extends SurfaceView implements Runnable {
                     Rect a = enemy.getRect();
                     Rect b = bullet.getRect();
                     Rect c = ourShip.getRect();
-                    if (a.intersect(b) && entry.getValue() == BULLET_STRAIGHT) {
+                    if (a.intersect(b) && (entry.getValue() == BULLET_STRAIGHT || entry.getValue() == BULLET_LEFT_30_DEGREE || entry.getValue() == BULLET_RIGHT_30_DEGREE )) {
                         bullets.remove(bullet);
                         Random rand = new Random();
                         int n = rand.nextInt(2);
@@ -405,7 +408,7 @@ public class GameView extends SurfaceView implements Runnable {
                         }
                         explosions.add(new Explosion(getResources(), bullet.getX(), bullet.getY() - 50) );
                         aliens.remove(alien);
-                        enemy.playExplodingSound();
+                        explodingfxs.start();
                         playerScore += 200;
                         if (playerScore>Highscore) {
                             Highscore = playerScore;
@@ -421,7 +424,7 @@ public class GameView extends SurfaceView implements Runnable {
                             }
                             ourShip.getHit();
                         }
-                        enemy.playExplodingSound();
+                        explodingfxs.start();
                         Log.d("Get hit", "Intersect with enemy");
                     }
                 }
@@ -585,7 +588,7 @@ public class GameView extends SurfaceView implements Runnable {
                 }
                 if (aliens.get(i).getClass() == AlienBattleShip.class) {
                     AlienBattleShip enemy = (AlienBattleShip) aliens.get(i);
-                    Bullet bulletEnemyLeft = new Bullet(getResources(), (int) enemy.getWidth() - 100, (int) enemy.getHeight() - 50, (int) enemy.getX() - 50, (int) enemy.getY(), contextGame, 2);
+                    Bullet bulletEnemyLeft = new Bullet(getResources(), (int) enemy.getWidth() - 100, (int) enemy.getHeight() - 50, (int) enemy.getX() + 70, (int) enemy.getY(), contextGame, 2);
                     Bullet bulletEnemyRight = new Bullet(getResources(), (int) enemy.getWidth() - 100, (int) enemy.getHeight() - 50, (int) enemy.getX() + 30, (int) enemy.getY(), contextGame, 2);
                     bulletEnemyRight.playShootSound();
                     bullets.put(bulletEnemyLeft, BULLET_DOWN);
@@ -594,5 +597,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
     }
+
+
 
 }

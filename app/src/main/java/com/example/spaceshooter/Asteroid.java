@@ -15,14 +15,12 @@ public class Asteroid {
     boolean exploded;
     Bitmap asteroid;
     Bitmap explode1, explode2, explode3, explode4;
-    MediaPlayer explodingSfx;
     private int rectConstraint;
 
     public Asteroid(int x, Resources res, Context context) {
         this.x = x;
         this.y = 0;
         rectConstraint = 50;
-        explodingSfx = MediaPlayer.create(context, R.raw.exploding);
         asteroid = BitmapFactory.decodeResource(res, R.drawable.asteroid);
         explode1 = BitmapFactory.decodeResource(res, R.drawable.explode1);
         explode2 = BitmapFactory.decodeResource(res, R.drawable.explode2);
@@ -85,10 +83,6 @@ public class Asteroid {
         return asteroid;
     }
 
-    public void playExplodingSound() {
-        explodingSfx.start();
-    }
-
     public Rect getRect() {
         return new Rect(x + rectConstraint, y + rectConstraint, x + width - rectConstraint, y + height - rectConstraint);
     }
@@ -108,4 +102,5 @@ public class Asteroid {
     public void setExploded(boolean exploded) {
         this.exploded = exploded;
     }
+
 }

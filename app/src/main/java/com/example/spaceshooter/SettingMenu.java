@@ -1,6 +1,7 @@
 package com.example.spaceshooter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,13 @@ public class SettingMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        findViewById(R.id.manual).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingMenu.this, manualActivity.class));
             }
         });
     }

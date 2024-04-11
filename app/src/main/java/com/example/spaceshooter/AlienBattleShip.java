@@ -19,7 +19,6 @@ public class AlienBattleShip extends Alien{
         btmp = BitmapFactory.decodeResource(res, R.drawable.dreadnaught);
         liveTime = 150;
         stillAlive = true;
-        super.explodingSfx = MediaPlayer.create(context, R.raw.exploding);
         width = btmp.getWidth() - 100;
         height = btmp.getHeight() - 100;
         btmp = Bitmap.createScaledBitmap(btmp, width, height, false);
@@ -53,7 +52,4 @@ public class AlienBattleShip extends Alien{
         return stillAlive;
     }
 
-    public void playExplodingSound() {
-        explodingSfx.start();
-    }
 }

@@ -73,6 +73,7 @@
         <activity
             android:name=".SettingMenu"
             android:launchMode="singleTask" />
+        <activity android:name=".manualActivity" android:exported="true"/>
         <activity
             android:name=".MainMenu"
             android:exported="true">
